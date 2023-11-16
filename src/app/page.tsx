@@ -3,11 +3,11 @@
 // pages/index.tsx
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
+import { AppDispatch, RootState } from "../store/store";
 import { fetchPosts } from "../store/postsSlice";
 
 const Home: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const { data, loading, error } = useSelector(
     (state: RootState) => state.posts
   );

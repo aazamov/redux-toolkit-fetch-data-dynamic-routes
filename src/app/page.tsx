@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchPosts } from "../store/postsSlice";
+import Link from "next/link";
 
 const Home: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -26,16 +27,21 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <h1>Posts</h1>
-      <ul>
-        {data.map((post) => (
-          <li key={post.id}>
-            <a href={`/posts/${post.userId}`}>
-              <h3>{post.title}</h3>
-            </a>
-          </li>
-        ))}
-      </ul>
+      {loading ? (
+        <p>loading</p>
+      ) : error ? (
+        <p>erorr {error}</p>
+      ) : (
+        <ul>
+          {data.map((post) => (
+            <li key={post.id}>
+              <Link href={`/posts/${post.url}`}>
+                <h3>{post.title}</h3>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

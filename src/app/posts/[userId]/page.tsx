@@ -23,27 +23,24 @@ const Post = ({ params }: { params: any }) => {
   }, [dispatch]);
 
   // Assuming fetchPosts updates the Redux state with posts
-  const userPosts = data.filter((post) => post.id === Number(userId));
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+  const userPosts = data.filter((post) => post.url === userId);
 
   return (
     <div>
-      <h1>User Posts</h1>
-      <ul>
-        {userPosts.map((post) => (
-          <li key={post.id}>
-            <h3>{post.title}</h3>
-            <p>{post.body}</p>
-          </li>
-        ))}
-      </ul>
+      {loading ? (
+        <p>loading</p>
+      ) : error ? (
+        <p>error: {error}</p>
+      ) : (
+        <ul>
+          {userPosts.map((post) => (
+            <li key={post.id}>
+              <h3>{post.title}</h3>
+              <p>{post.brief}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

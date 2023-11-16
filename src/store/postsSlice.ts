@@ -1,36 +1,68 @@
+
+
 // postsSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface Post {
-  userId: number;
+interface SubCategory {
   id: number;
-  title: string;
-  body: string;
+  slug: string;
+  name: string;
 }
 
-interface PostsState {
-  data: Post[];
+interface Image {
+  large: string;
+  medium: string;
+  small: string;
+  thumbnail: string;
+  original: string;
+}
+
+interface NewsItem {
+  id: number;
+  sub_category: SubCategory;
+  title: string;
+  brief: string;
+  image: Image;
+  video: string | null;
+  pub_date: string;
+  url: string;
+  tags: string[];
+}
+
+interface NewsApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: NewsItem[];
+}
+
+interface NewsState {
+  data: NewsItem[];
   loading: boolean;
   error: string | null;
 }
 
-const initialState: PostsState = {
+const initialState: NewsState = {
   data: [],
   loading: false,
   error: null,
 };
 
-export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const response = await axios.get<Post[]>(
-    "https://jsonplaceholder.typicode.com/posts"
-  );
-
-  return response.data;
+export const fetchPosts = createAsyncThunk("news/fetchPosts", async () => {
+  try {
+    const response = await axios.get<NewsApiResponse>(
+      "https://api.zamon.uz/api/v3/uz/news/list"
+    );
+    return response.data.results;
+  } catch (error) {
+    // If there's an error, throw an exception and let the thunk middleware handle it
+    throw new Error("An error occurred while fetching news.");
+  }
 });
 
-const postsSlice = createSlice({
-  name: "posts",
+const newsSlice = createSlice({
+  name: "news",
   initialState,
   reducers: {},
   extraReducers: (builder: any) => {
@@ -42,8 +74,8 @@ const postsSlice = createSlice({
       .addCase(
         fetchPosts.fulfilled,
         (
-          state: { loading: boolean; data: Post[] },
-          action: PayloadAction<Post[]>
+          state: { loading: boolean; data: NewsApiResponse[] },
+          action: PayloadAction<NewsApiResponse[]>
         ) => {
           state.loading = false;
           state.data = action.payload;
@@ -62,4 +94,4 @@ const postsSlice = createSlice({
   },
 });
 
-export default postsSlice.reducer;
+export default newsSlice.reducer;
